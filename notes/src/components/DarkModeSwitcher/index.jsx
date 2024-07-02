@@ -1,7 +1,7 @@
 import { ToggleButton, ToggleButtonGroup } from "@mui/material";
 import WbSunnyIcon from "@mui/icons-material/WbSunny";
 import Brightness2Icon from "@mui/icons-material/Brightness2";
-import { useContext } from "react";
+import { useContext} from "use-context-selector";
 import { DarkModeContext } from "../DarkModeContext";
 import "./index.css";
 

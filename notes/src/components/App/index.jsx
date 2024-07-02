@@ -1,11 +1,12 @@
 import { formatISO } from "date-fns";
 import Jabber from "jabber";
 import { nanoid } from "nanoid";
-import { memo, useEffect, useRef, useState } from "react";
+import { memo, useEffect, useState, startTransition, useCallback } from "react";
 import { useDispatch } from "react-redux";
 import {
   deleteNotes,
   getNotes,
+  persistActiveId,
   putNote,
   saveNotesToLocalStorage,
 } from "../../utils/storage";
@@ -20,16 +21,24 @@ import StatusBar from "../StatusBar";
 const jabber = new Jabber();
 
 function App({ mobxStore }) {
-  const [notes, setNotes] = useState(getNotes());
+  const [notes, setNotes] = useState(() => getNotes());
   const [activeNoteId, setActiveNoteId] = useState(null);
 
   useEffect(() => {
-    saveNotesToLocalStorage(notes, activeNoteId);
-  }, [notes, activeNoteId]);
+    startTransition(() => {
+      saveNotesToLocalStorage(notes);
+    })
+  }, [notes]);
+  
+  useEffect(() => {
+    startTransition(() => {
+      persistActiveId(activeNoteId);
+    });
+  }, [activeNoteId]);
 
   const dispatch = useDispatch();
 
-  const saveNote = (id, { text, date }) => {
+  const saveNote = useCallback((id, { text, date }) => {
     putNote(id, { text, date });
 
     const newNotes = getNotes();
@@ -38,7 +47,7 @@ function App({ mobxStore }) {
     dispatch(
       updateLastActiveDate(formatISO(new Date(), { representation: "date" }))
     );
-  };
+  }, [getNotes, setNotes, putNote, dispatch]);
 
   const createNewNotes = ({ count, paragraphs }) => {
     for (let i = 0; i < count; i++) {

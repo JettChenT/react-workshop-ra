@@ -3,7 +3,7 @@ import gfm from "remark-gfm";
 import { format } from "date-fns";
 import "./index.css";
 
-function NoteButton({ isActive, onNoteActivated, text, filterText, date }) {
+function NoteButton({ isActive, id, onNoteActivated, text, filterText, date, style }) {
   const className = [
     "notes-list__button",
     "notes-list__note",
@@ -13,10 +13,11 @@ function NoteButton({ isActive, onNoteActivated, text, filterText, date }) {
     .join(" ");
 
   return (
-    <button className={className} onClick={onNoteActivated}>
+    <button className={className} onClick={() => {onNoteActivated(id)}} style={style}>
       <span className="notes-list__note-meta">
         {format(date, "d MMM yyyy")}
       </span>
+      {id}
       {generateNoteHeader(text, filterText)}
     </button>
   );

@@ -1,5 +1,6 @@
-import { useState } from "react";
+import { startTransition, useMemo, useState } from "react";
 import { Button, ButtonGroup } from "@mui/material";
+import { FixedSizeList as List } from 'react-window';
 import FilterInput from "../FilterInput";
 import NoteButton from "../NoteButton";
 import "./index.css";
@@ -12,19 +13,10 @@ function NotesList({
   onDeleteAllRequested,
 }) {
   const [filter, setFilter] = useState("");
+  const [filterInput, setFilterInput] = useState("")
 
-  return (
-    <div className="notes-list" style={{ position: "relative" }}>
-      <div className="notes-list__filter">
-        <FilterInput
-          filter={filter}
-          onChange={setFilter}
-          noteCount={Object.keys(notes).length}
-        />
-      </div>
-
-      <div className="notes-list__notes">
-        {Object.values(notes)
+  let noteBtns = useMemo(() => {
+    return Object.values(notes)
           .sort((a, b) => b.date.getTime() - a.date.getTime())
           .filter(({ text }) => {
             if (!filter) {
@@ -33,16 +25,42 @@ function NotesList({
 
             return text.toLowerCase().includes(filter.toLowerCase());
           })
-          .map(({ id, text, date }) => (
-            <NoteButton
+  }, [notes, filter, activeNoteId, onNoteActivated])
+
+  return (
+    <div className="notes-list" style={{ position: "relative" }}>
+      <div className="notes-list__filter">
+        <FilterInput
+          filter={filterInput}
+          onChange={(val) => {
+            setFilterInput(val);
+            startTransition(() => {setFilter(val)})
+          }}
+          noteCount={Object.keys(notes).length}
+        />
+      </div>
+
+      <div className="notes-list__notes">
+        <List
+          // hacky but works as an upper bound
+          height={window.innerHeight} 
+          itemCount={noteBtns.length}
+          itemSize={100}
+        >
+          {({ index, style }) => {
+            let { id, text, date } = noteBtns[index]
+            return <NoteButton
               key={id}
+              id={id}
               isActive={activeNoteId === id}
-              onNoteActivated={() => onNoteActivated(id)}
+              onNoteActivated={onNoteActivated}
               text={text}
               filterText={filter}
               date={date}
+              style={style}
             />
-          ))}
+          }}
+        </List>
       </div>
 
       <div className="notes-list__controls">

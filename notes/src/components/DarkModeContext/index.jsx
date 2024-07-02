@@ -1,4 +1,5 @@
-import { createContext, useEffect, useState } from "react";
+import { useEffect, useState } from "react";
+import { createContext } from "use-context-selector";
 import "./index.css";
 
 export const DarkModeContext = createContext();

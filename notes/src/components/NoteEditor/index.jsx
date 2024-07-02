@@ -1,23 +1,33 @@
-import { useEffect, useRef } from "react";
+import { startTransition, useEffect, useMemo, useRef, useState } from "react";
 import CodeMirror from "codemirror";
 import "codemirror/mode/markdown/markdown";
 import "codemirror/lib/codemirror.css";
 import "./index.css";
 
 function NoteEditor({ notes, activeNoteId, saveNote }) {
-  const currentNote = notes[activeNoteId];
+  const currentNote = useMemo(()=>(notes[activeNoteId]), [ activeNoteId]);
+  const [curInput, setCurInput] = useState(currentNote.text);
   const textareaRef = useRef();
 
   useEffect(() => {
+    let updated = notes[activeNoteId].text;
+    setCurInput(updated)
+    console.log("updated:", updated)
+
     const editor = CodeMirror.fromTextArea(textareaRef.current, {
       mode: "markdown",
       lineWrapping: true,
     });
 
+    editor.setValue(updated)
+
     editor.on("change", (doc, change) => {
-      if (change.origin !== "setValue") {
-        saveNote({ text: doc.getValue() });
-      }
+      setCurInput(doc.getValue());
+      startTransition(() => {
+        if (change.origin !== "setValue") {
+          saveNote({ text: doc.getValue() });
+        }
+      })
     });
 
     return () => editor.toTextArea();
@@ -27,7 +37,7 @@ function NoteEditor({ notes, activeNoteId, saveNote }) {
     <div className="note-editor" key={activeNoteId}>
       <textarea
         ref={textareaRef}
-        defaultValue={currentNote.text}
+        value={curInput}
         autoComplete="off"
       />
     </div>

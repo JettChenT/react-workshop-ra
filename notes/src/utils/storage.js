@@ -15,7 +15,7 @@ export const loadNotesFromLocalStorage = () => {
   return transformedNotes;
 };
 
-export const saveNotesToLocalStorage = (notes, activeNoteId) => {
+export const saveNotesToLocalStorage = (notes) => {
   const transformedNotes = {};
   for (const [id, note] of Object.entries(notes)) {
     const transformedNote = {
@@ -29,8 +29,11 @@ export const saveNotesToLocalStorage = (notes, activeNoteId) => {
   const stringifiedNotes = JSON.stringify(transformedNotes);
 
   localStorage.reactWorkshopAppNotes = stringifiedNotes;
-  localStorage.reactWorkshopActiveNoteId = activeNoteId;
 };
+
+export const persistActiveId = (activeNoteId) => {
+  localStorage.reactWorkshopActiveNoteId = activeNoteId;
+}
 
 export const getNotes = () => {
   if (!notes) {

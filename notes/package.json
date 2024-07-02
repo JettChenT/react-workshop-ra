@@ -6,9 +6,11 @@
   "dependencies": {
     "@emotion/react": "^11.10.5",
     "@emotion/styled": "^11.10.5",
+    "@million/lint": "latest",
     "@mui/icons-material": "^5.11.0",
     "@mui/material": "^5.11.4",
     "@reduxjs/toolkit": "^1.9.1",
+    "@tanstack/react-virtual": "^3.8.1",
     "codemirror": "^5.65.11",
     "date-fns": "^2.29.3",
     "jabber": "^1.5.2",
@@ -21,9 +23,12 @@
     "react-dom": "^18.2.0",
     "react-markdown": "^8.0.4",
     "react-redux": "^8.0.5",
+    "react-window": "^1.8.10",
     "redux": "^4.2.0",
     "remark-gfm": "^3.0.1",
-    "text-readability": "^1.0.5"
+    "scheduler": "^0.23.2",
+    "text-readability": "^1.0.5",
+    "use-context-selector": "^2.0.0"
   },
   "devDependencies": {
     "@vitejs/plugin-react": "^3.0.1",

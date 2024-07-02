@@ -1,5 +1,5 @@
 import { Button } from "@mui/material";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import fakeApi from "../../utils/fakeApi";
 import NoteEditor from "../NoteEditor";
 import NoteView from "../NoteView";
@@ -29,6 +29,11 @@ function PrimaryPane({ activeNoteId, notes, saveNote }) {
     setIsLoading(false);
   };
 
+  let viewText = useMemo(() => {
+    if(!activeNoteId)return null;
+    return notes[activeNoteId].text;
+  }, [notes, activeNoteId]);
+
   if (!activeNoteId) {
     return (
       <div className="primary-pane__empty-editor">
@@ -39,6 +44,7 @@ function PrimaryPane({ activeNoteId, notes, saveNote }) {
       </div>
     );
   }
+
 
   return (
     <div className="primary-pane">
@@ -70,7 +76,7 @@ function PrimaryPane({ activeNoteId, notes, saveNote }) {
           activeNoteId={activeNoteId}
         />
         <div className="primary-pane__view">
-          <NoteView text={notes[activeNoteId].text} />
+          <NoteView text={viewText} />
         </div>
       </div>
       <div
